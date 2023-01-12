@@ -1,23 +1,15 @@
 package com.m2i.FilRouge.controller.dto;
 
-import com.m2i.FilRouge.entity.Message;
 import com.m2i.FilRouge.entity.User;
 import com.m2i.FilRouge.repository.MessageRepository;
 import com.m2i.FilRouge.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+
 public class UserDTO {
     private Long id;
     @NotEmpty
@@ -31,7 +23,7 @@ public class UserDTO {
     private String email;
 
     private User user;
-    private List<Message> messages;
+    private List<MessageDTO> messages;
     private UserRepository userRepo;
     private MessageRepository messageRepo;
 
