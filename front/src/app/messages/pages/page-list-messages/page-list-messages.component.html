@@ -1,0 +1,21 @@
+<div id="messagesList" *ngIf="messages$ | async as messages">
+  <article *ngFor="let message of messages"  class="d-flex flex-column">
+    <p class="redFont">{{ message.userId }}</p>
+    <p>{{ message.content }}</p>
+    <small>{{ message.createdAt }}</small>
+    <span (click)="deleteMessage(message.id)">
+      <app-icon-delete></app-icon-delete>
+    </span>
+  </article>
+</div>
+
+<div id="messageForm">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <fieldset class="d-flex">
+      <textarea class="form-control" placeholder="Envoyer un message" formControlName="content" (keyup.enter)="onSubmit()" required></textarea>
+      <button class="send" type="submit" aria-label="Envoyer">
+        <app-icon-send></app-icon-send>
+      </button>
+    </fieldset>
+  </form>
+</div>
