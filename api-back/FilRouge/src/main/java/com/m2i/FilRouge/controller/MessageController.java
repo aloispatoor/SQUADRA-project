@@ -16,8 +16,6 @@ import java.util.List;
 public class MessageController {
     @Autowired
     private MessageService service;
-    @Autowired
-    private ChannelService cService;
 
     @GetMapping("/messages")
     public List<Message> getAll(){
@@ -34,7 +32,7 @@ public class MessageController {
     @PostMapping("channels/{id}/messages")
     @ResponseStatus(HttpStatus.CREATED)
     public Message add(@PathVariable("id") Long channelId, @RequestBody Message message){
-        return service.addMessage(message, channelId);
+        return service.addMessageInChannel(message, channelId);
     }
 
     @DeleteMapping("messages/delete/{id}")

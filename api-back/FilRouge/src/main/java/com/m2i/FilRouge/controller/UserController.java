@@ -1,7 +1,9 @@
 package com.m2i.FilRouge.controller;
 
 import com.m2i.FilRouge.entity.Channel;
+import com.m2i.FilRouge.entity.Message;
 import com.m2i.FilRouge.entity.User;
+import com.m2i.FilRouge.service.MessageService;
 import com.m2i.FilRouge.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ import java.util.Optional;
 public class UserController {
     @Autowired
     private UserService service;
+    @Autowired
+    private MessageService mService;
 
     @GetMapping("")
     public List<User> getAll(){
@@ -28,6 +32,18 @@ public class UserController {
         return service.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/messages")
+    public List<Message> getAllUserMessages(@PathVariable Long id){
+        User user = service.getUserById(id).get();
+        return user.getMessages();
+    }
+
+    @PostMapping("/{id}/messages")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Message postMessage(@PathVariable Long id, @RequestBody Message message){
+        return mService.addMessageByUser(message, id);
     }
 
     @PostMapping("")
