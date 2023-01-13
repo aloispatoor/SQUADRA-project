@@ -5,14 +5,12 @@ import { GabaritsModule } from '../gabarits/gabarits.module';
 import { BtnComponent } from './components/btn/btn.component';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ChannelPipe } from './pipes/channel.pipe';
 
 
 
 @NgModule({
   declarations: [
     BtnComponent,
-    ChannelPipe
   ],
   imports: [
     CommonModule,
@@ -23,7 +21,6 @@ import { ChannelPipe } from './pipes/channel.pipe';
     IconsModule,
     BtnComponent,
     ReactiveFormsModule,
-    ChannelPipe,
   ]
 })
 export class SharedModule { }
