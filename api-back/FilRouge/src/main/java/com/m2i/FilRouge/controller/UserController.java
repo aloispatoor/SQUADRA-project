@@ -4,6 +4,8 @@ import com.m2i.FilRouge.entity.Channel;
 import com.m2i.FilRouge.entity.User;
 import com.m2i.FilRouge.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +24,35 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getById(@PathVariable Long id){
-        return service.getUserById(id);
+    public ResponseEntity<User> getById(@PathVariable Long id){
+        return service.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public User post(@RequestBody User user){
+        return service.addUser(user);
+    }
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user){
+        return service.getUserById(id)
+                .map(savedUser -> {
+                    savedUser.setEmail(user.getEmail());
+                    savedUser.setUsername(user.getUsername());
+                    savedUser.setPassword(user.getPassword());
+                    User newUser = service.updateUser(savedUser);
+                    return new ResponseEntity<>(newUser, HttpStatus.OK);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        service.deleteUser(id);
+        return new ResponseEntity<String>("User removed successfully", HttpStatus.OK);
     }
 
     @GetMapping("/{id}/channels")
@@ -34,21 +63,5 @@ public class UserController {
     @PostMapping("/{id}/channels")
     public User addChannels(@PathVariable Long id, @RequestBody List<Long> chanIds){
         return service.addChannels(id, chanIds);
-    }
-
-    @PostMapping("")
-    public User post(@RequestBody User user){
-        return service.addUser(user);
-    }
-
-    @PutMapping("/edit/{id}")
-    public User update(@PathVariable Long id, @RequestBody User user){
-        user.setId(id);
-        return service.updateUser(user);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Long id){
-        service.deleteUser(id);
     }
 }

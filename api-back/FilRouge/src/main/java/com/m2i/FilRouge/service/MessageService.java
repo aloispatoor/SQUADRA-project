@@ -2,6 +2,7 @@ package com.m2i.FilRouge.service;
 
 import com.m2i.FilRouge.entity.Channel;
 import com.m2i.FilRouge.entity.Message;
+import com.m2i.FilRouge.repository.ChannelRepository;
 import com.m2i.FilRouge.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class MessageService {
     @Autowired
     private MessageRepository repo;
+    @Autowired
+    private ChannelRepository chanRepo;
 
     public List<Message> getAllMessages(){
         return repo.findAll();
@@ -22,11 +25,9 @@ public class MessageService {
         return repo.findById(id);
     }
 
-    public List<Message> getMessagesByChannel(Channel channel){
-        return channel.getMessages();
-    }
-
-    public Message addMessage(Message message){
+    public Message addMessage(Message message, Long id){
+        Channel channel = chanRepo.findById(id).get();
+        message.setChannel(channel);
         return repo.save(message);
     }
 

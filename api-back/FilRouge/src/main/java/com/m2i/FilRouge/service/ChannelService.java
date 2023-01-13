@@ -1,6 +1,7 @@
 package com.m2i.FilRouge.service;
 
 import com.m2i.FilRouge.entity.Channel;
+import com.m2i.FilRouge.entity.Message;
 import com.m2i.FilRouge.entity.User;
 import com.m2i.FilRouge.repository.ChannelRepository;
 import com.m2i.FilRouge.repository.UserRepository;
@@ -21,13 +22,6 @@ public class ChannelService {
         return repo.findAll();
     }
 
-    public Channel setGeneralChannel(){
-        String name = "Général";
-        String description = "Canal général";
-        Channel general = new Channel(name, description);
-        return repo.save(general);
-    }
-
     public Optional<Channel> getChannelById(Long id){
         return repo.findById(id);
     }
@@ -36,8 +30,8 @@ public class ChannelService {
         return repo.save(channel);
     }
 
-    public List<User> getChannelUsers(Long id){
-        return repo.findById(id).get().getUsers();
+    public List<Message> getAllMessagesByChannel(Channel channel){
+        return channel.getMessages();
     }
 
     public Channel addUsers(Long id, List<Long> userIds){
@@ -47,7 +41,7 @@ public class ChannelService {
         return repo.save(channel);
     }
 
-    public void deleteChannel(Long id){
+    public void deleteChannel(Long id) throws Exception{
         try{
             Channel channel = repo.findById(id).get();
             if(!channel.getName().equals("Général")){
@@ -58,7 +52,7 @@ public class ChannelService {
         }
     }
 
-    public Channel updateChannel(Channel channel){
+    public Channel updateChannel(Channel channel) throws Exception{
         try{
             Channel newChannel = repo.findById(channel.getId()).orElse(null);
             if(newChannel != null && !channel.getName().equals("Général")){

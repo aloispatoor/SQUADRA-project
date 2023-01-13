@@ -6,57 +6,68 @@ import com.m2i.FilRouge.entity.User;
 import com.m2i.FilRouge.service.ChannelService;
 import com.m2i.FilRouge.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping(value = "")
+@RequestMapping(value = "/channels")
 public class ChannelController {
     @Autowired
     private ChannelService service;
     @Autowired
     private MessageService mService;
 
-    @GetMapping("/channels")
+    @GetMapping("")
     public List<Channel> getAll(){
         return service.getAllChannels();
     }
 
-    @GetMapping("channels/{id}")
-    public Optional<Channel> getById(@PathVariable Long id){
-        return service.getChannelById(id);
+    @GetMapping("/{id}/messages")
+    public List<Message> getAllMessagesByChannel(@PathVariable Long id){
+        Channel channel = service.getChannelById(id).get();
+        return service.getAllMessagesByChannel(channel);
     }
 
-//    @GetMapping("/{id}/users")
-//    public List<User> getChannelUsers(@PathVariable Long id){
-//        return service.getChannelUsers(id);
-//    }
-//
-//    @PostMapping("/{id}/users")
-//    public Channel addUsers(@PathVariable Long id, @RequestBody List<Long> userIds){
-//        return service.addUsers(id, userIds);
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Channel> getById(@PathVariable Long id){
+        return service.getChannelById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
-    @PostMapping("/channels")
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
     public Channel post(@RequestBody Channel channel){
         return service.addChannel(channel);
     }
-    @PostMapping("/general")
-    public Channel setGeneralChannel(){
-        return service.setGeneralChannel();
+
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<Channel> update(@PathVariable Long id, @RequestBody Channel channel){
+        return service.getChannelById(id)
+                .map(savedChannel -> {
+                    savedChannel.setName(channel.getName());
+                    savedChannel.setDescription(channel.getDescription());
+                    savedChannel.setMessages(channel.getMessages());
+
+                    Channel newChannel = null;
+                    try {
+                        newChannel = service.updateChannel(savedChannel);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    return new ResponseEntity<>(newChannel, HttpStatus.OK);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("channels/edit/{id}")
-    public Channel update(@PathVariable Long id, @RequestBody Channel channel){
-        channel.setId(id);
-        return service.updateChannel(channel);
-    }
-
-    @DeleteMapping("channels/delete/{id}")
-    public void delete(@PathVariable Long id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) throws Exception {
         service.deleteChannel(id);
+        return new ResponseEntity<String>("Channel deleted successfully", HttpStatus.OK);
     }
 }
