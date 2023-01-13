@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Message } from 'src/app/core/models/message';
 import { MessageService } from 'src/app/core/services/message.service';
 
@@ -11,7 +11,7 @@ import { MessageService } from 'src/app/core/services/message.service';
   styleUrls: ['./page-list-messages.component.scss']
 })
 export class PageListMessagesComponent {
-  public messages$!: Observable<Message[]>;
+  public messages$!: BehaviorSubject<Message[]>;
   public message: Message;
   public form: FormGroup;
   public channelId: number = 8;
@@ -23,11 +23,15 @@ export class PageListMessagesComponent {
     private router: Router,
     private activatedRoute: ActivatedRoute){
 
+    this.messages$ = this.service.collection$;
+
     this.activatedRoute.params.subscribe((params) => {
       this.channelId = params['id'];
-      this.messages$ = this.service.getByChannel(this.channelId);
+      this.service.getByChannel(this.channelId);
       console.log(this.messages$);
     })
+
+    this.service.refresh();
 
     this.message = new Message();
     this.form = this.formBuilder.group({
@@ -39,7 +43,7 @@ export class PageListMessagesComponent {
 
   public onSubmit(){
     if(this.message.content != ""){
-      this.service.add(this.form.value).subscribe(()=> {
+      this.service.add(this.channelId, this.form.value).subscribe(()=> {
         this.router.navigate([`/channels/${this.channelId}`]);
         console.log("Message sent");
       });

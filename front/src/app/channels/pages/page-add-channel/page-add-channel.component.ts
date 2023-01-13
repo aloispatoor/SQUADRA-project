@@ -25,7 +25,7 @@ export class PageAddChannelComponent {
 
   public onSubmit(){
     this.service.add(this.form.value).subscribe(()=> {
-      this.router.navigate(['/channels']);
+      this.router.navigate([`/channels/${this.channel.id}`]);
       console.log("Channel created");
     });
   }

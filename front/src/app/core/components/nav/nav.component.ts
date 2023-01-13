@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Channel } from '../../models/channel';
 import { ChannelService } from '../../services/channel.service';
 
@@ -14,6 +14,7 @@ export class NavComponent {
 
   constructor(private service: ChannelService, private router: Router){
     this.collection$ = this.service.collection$;
+    this.service.refreshCollection();
   }
 
   public goToEdit(id: number){
