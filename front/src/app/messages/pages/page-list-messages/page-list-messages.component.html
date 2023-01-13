@@ -1,4 +1,4 @@
-<div id="messagesList" *ngIf="messages$ | async as messages">
+<div id="messagesList" *ngIf="filteredMessages | async as messages">
   <article *ngFor="let message of messages"  class="d-flex flex-column">
     <p class="redFont">{{ message.userId }}</p>
     <p>{{ message.content }}</p>

@@ -16,6 +16,7 @@ export class MessageService {
   constructor(private httpClient: HttpClient) {
     this.urlApi = Environment.urlApi;
     this.collection$ = new BehaviorSubject<Message[]>([]);
+    this.refresh();
   }
 
   public refresh(){
