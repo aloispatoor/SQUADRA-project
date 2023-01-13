@@ -77,7 +77,8 @@ public class UserController {
     }
 
     @PostMapping("/{id}/channels")
-    public User addChannels(@PathVariable Long id, @RequestBody List<Long> chanIds){
-        return service.addChannels(id, chanIds);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Channel addChannels(@PathVariable("id") Long id, @RequestBody Channel channel){
+        return service.addChannels(id, channel);
     }
 }

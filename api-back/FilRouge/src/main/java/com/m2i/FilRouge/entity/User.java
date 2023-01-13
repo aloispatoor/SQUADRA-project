@@ -81,4 +81,8 @@ public class User {
     public void setChannels(List<Channel> channels) {
         this.channels = channels;
     }
+
+    public void addChannel(Channel channel){
+        this.channels.add(channel);
+    }
 }

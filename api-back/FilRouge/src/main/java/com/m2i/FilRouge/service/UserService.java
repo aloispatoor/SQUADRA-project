@@ -29,12 +29,11 @@ public class UserService {
         return repo.save(user);
     }
 
-    public User addChannels(Long id, List<Long> channelIds){
+    public Channel addChannels(Long id, Channel channel){
         User user = repo.findById(id).get();
-        List<Channel> channels = chanRepo.findAllById(channelIds);
-        user.setChannels(channels);
+        user.addChannel(channel);
         System.out.println("Channel added by user " + user.getUsername());
-        return repo.save(user);
+        return chanRepo.save(channel);
     }
 
     public void deleteUser(Long id){
